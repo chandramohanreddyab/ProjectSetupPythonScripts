@@ -1,4 +1,6 @@
 import os
+import argparse
+import sys
 
 def create_file(path, content=""):
     with open(path, "w") as f:
@@ -113,5 +115,15 @@ venv/
     print("✅ AI/ML project structure created successfully!")
 
 if __name__ == "__main__":
-    project_location = input("Enter full project folder path: ").strip()
+    parser = argparse.ArgumentParser(description='Scaffold an AI/ML Flask project in the specified folder')
+    parser.add_argument('project_path', help='Full path to project folder to create')
+    parser.add_argument('--force', action='store_true', help='Allow creating/overwriting files in an existing non-empty folder')
+    args = parser.parse_args()
+    project_location = args.project_path
+
+    # prevent accidental overwrites unless --force is provided
+    if os.path.exists(project_location) and os.listdir(project_location) and not args.force:
+        print(f"Error: target folder '{project_location}' already exists and is not empty. Use --force to overwrite.")
+        sys.exit(1)
+
     create_ai_ml_project(project_location)
